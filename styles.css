@@ -31,18 +31,15 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, 'S
 #search-wrap { padding: 4px 0 12px; }
 #search { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 15px; }
 
-/* Carousel */
-#carousel { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 10px; border-radius: 16px; scrollbar-width: none; }
-#carousel::-webkit-scrollbar { display: none; }
-.slide { min-width: 100%; scroll-snap-align: start; position: relative; border-radius: 16px; overflow: hidden; cursor: pointer; }
-.slide img { width: 100%; aspect-ratio: 16/9; object-fit: cover; display: block; }
+/* Poster fallback (posters removed — 8movie blocks them, so cards show the title instead) */
+.dc-poster-fallback { width: 100%; aspect-ratio: 3/4; border-radius: 12px; background: linear-gradient(160deg, #3a1c5c, #16213e 55%, #123a5c); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; text-align: center; }
+.dc-fb-ico { font-size: 28px; }
+.dc-fb-title { font-size: 12px; font-weight: 800; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
+.detail-hero-fallback { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, #3a1c5c, #16213e 60%, #123a5c); }
 .slide-info { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 14px 12px; background: linear-gradient(transparent, rgba(0,0,0,.85)); }
 .slide-title { font-size: 18px; font-weight: 800; }
 .slide-meta { font-size: 12px; color: #ddd; margin-top: 4px; }
 .slide-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 3px 8px; margin-right: 6px; }
-#carousel-dots { display: flex; justify-content: center; gap: 6px; padding: 8px 0 4px; }
-#carousel-dots span { width: 8px; height: 8px; border-radius: 50%; background: #444; }
-#carousel-dots span.on { background: var(--accent); width: 20px; border-radius: 4px; }
 
 /* Sections */
 .section-head { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; }
@@ -85,6 +82,23 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, 'S
 
 /* My List / empty */
 .empty-msg { color: var(--hint); text-align: center; padding: 30px 10px; line-height: 1.6; }
+
+/* Top Up (KHQR) */
+.topup-label { font-size: 16px; font-weight: 800; margin-bottom: 10px; }
+.topup-amounts { display: flex; gap: 8px; margin-bottom: 12px; }
+.amt-btn { flex: 1; background: var(--card); color: var(--text); border: 1px solid var(--border); border-radius: 10px; padding: 11px 0; font-size: 15px; font-weight: 800; cursor: pointer; }
+.amt-btn.on { background: var(--accent); color: #fff; border-color: var(--accent); }
+.topup-qr { text-align: center; margin: 6px 0 10px; }
+.topup-qr img { width: 200px; height: 200px; border-radius: 12px; background: #fff; padding: 6px; }
+.topup-qr-missing { text-align: center; color: var(--hint); padding: 20px 10px; border: 1px dashed var(--border); border-radius: 12px; margin-bottom: 10px; }
+.topup-steps { font-size: 13px; line-height: 1.8; background: rgba(255,122,26,.08); border: 1px solid rgba(255,122,26,.25); border-radius: 12px; padding: 12px; margin-bottom: 12px; }
+.topup-code-row { display: flex; gap: 8px; }
+.topup-code-row input { flex: 1; min-width: 0; padding: 12px; border-radius: 10px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 15px; text-transform: uppercase; }
+#topup-redeem { background: var(--accent); color: #fff; border: none; border-radius: 10px; padding: 12px 18px; font-size: 15px; font-weight: 800; cursor: pointer; white-space: nowrap; }
+.topup-msg { font-size: 13px; margin-top: 10px; line-height: 1.5; }
+.topup-create-btn { background: var(--accent); color: #fff; border: none; border-radius: 12px; padding: 13px 20px; font-size: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-bottom: 12px; }
+.topup-deeplink { background: #00a651; color: #fff; border: none; border-radius: 12px; padding: 13px 20px; font-size: 15px; font-weight: 800; cursor: pointer; width: 100%; margin-bottom: 10px; }
+.topup-mode-toggle { text-align: center; font-size: 13px; color: var(--accent); margin-top: 12px; cursor: pointer; text-decoration: underline; }
 
 /* Wallet */
 .wallet-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 18px; margin-bottom: 12px; }
