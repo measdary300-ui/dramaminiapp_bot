@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>十八岁太奶奶驾到，重整家族荣耀 5 — មើលរឿង</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div id="app">
+  <!-- Drama header -->
+  <header id="drama-header">
+    <img id="poster" src="https://www.8movie.com/p/19087-tprf.jpg" alt="Poster" referrerpolicy="no-referrer">
+    <div class="drama-info">
+      <h1>十八岁太奶奶驾到<br>重整家族荣耀 5</h1>
+      <p class="drama-sub">Reborn at 18: The Great-Grandmother Takes Charge — Season 5</p>
+      <p class="drama-meta">📺 103 ភាគ · 🇨🇳 រឿងចិន · 🎬 Hongguo</p>
+      <button id="continue-btn" class="hidden">▶ បន្តមើលភាគ <span id="continue-ep"></span></button>
+    </div>
+  </header>
+
+  <!-- Episode search -->
+  <div id="ep-tools">
+    <input id="ep-jump" type="number" min="1" max="103" placeholder="ទៅភាគ... (1-103)">
+    <button id="ep-go">ទៅ</button>
+  </div>
+
+  <!-- Episode grid -->
+  <main>
+    <h2>📋 បញ្ជីភាគទាំងអស់ (<span id="ep-count">103</span>)</h2>
+    <div id="episodes"></div>
+  </main>
+
+  <!-- Video player overlay -->
+  <div id="player-overlay" class="hidden">
+    <div id="player-bar">
+      <button id="player-back">← ត្រឡប់</button>
+      <span id="player-title">ភាគ 1</span>
+      <button id="player-open-8movie">🌐 បើកនៅ 8movie</button>
+    </div>
+    <video id="player" controls playsinline preload="metadata"></video>
+    <div id="player-error" class="hidden">
+      ⚠️ វីដេអូនេះចាក់មិនបានក្នុង Mini App នេះទេ (CDN របស់ 8movie ត្រូវការ Referer ពី 8movie.com)។
+      <br>សូមចុច "បើកនៅ 8movie" ដើម្បីមើលនៅលើ website វិញ — ឬទាញយកដោយ SR Download។
+    </div>
+    <div id="player-nav">
+      <button id="prev-ep">← ភាគមុន</button>
+      <button id="next-ep">ភាគបន្ទាប់ →</button>
+    </div>
+  </div>
+</div>
+<script src="episodes.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

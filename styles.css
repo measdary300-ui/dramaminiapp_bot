@@ -1,0 +1,50 @@
+/* Telegram Drama Mini App — dark cinema style.
+   Uses Telegram theme colors when available, with a dark fallback. */
+:root {
+  --bg: var(--tg-theme-bg-color, #14141a);
+  --text: var(--tg-theme-text-color, #f2f2f2);
+  --hint: var(--tg-theme-hint-color, #9a9aad);
+  --link: var(--tg-theme-link-color, #7c5cff);
+  --button: var(--tg-theme-button-color, #7c5cff);
+  --button-text: var(--tg-theme-button-text-color, #ffffff);
+  --secondary-bg: var(--tg-theme-secondary-bg-color, #23232e);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, 'Segoe UI', 'Noto Sans Khmer', sans-serif; }
+.hidden { display: none !important; }
+
+/* Drama header */
+#drama-header { display: flex; gap: 14px; padding: 16px; background: linear-gradient(135deg, #2b1a4d, #14141a); }
+#poster { width: 110px; aspect-ratio: 3/4; object-fit: cover; border-radius: 12px; box-shadow: 0 4px 16px rgba(0,0,0,.5); }
+.drama-info { flex: 1; display: flex; flex-direction: column; gap: 6px; justify-content: center; }
+.drama-info h1 { font-size: 19px; line-height: 1.35; }
+.drama-sub { color: var(--hint); font-size: 12px; }
+.drama-meta { font-size: 13px; }
+#continue-btn { margin-top: 6px; background: var(--button); color: var(--button-text); border: none; border-radius: 10px; padding: 10px; font-size: 14px; font-weight: 700; cursor: pointer; align-self: flex-start; }
+
+/* Episode tools */
+#ep-tools { display: flex; gap: 8px; padding: 12px 16px 0; }
+#ep-jump { flex: 1; padding: 10px 12px; border-radius: 10px; border: 1px solid #444; background: var(--secondary-bg); color: var(--text); font-size: 15px; }
+#ep-go { background: var(--button); color: var(--button-text); border: none; border-radius: 10px; padding: 10px 18px; font-size: 15px; font-weight: 700; cursor: pointer; }
+
+/* Episode grid */
+main { padding: 12px 16px 24px; }
+main h2 { font-size: 16px; margin-bottom: 10px; }
+#episodes { display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; }
+.ep-btn { background: var(--secondary-bg); color: var(--text); border: 1px solid #3a3a48; border-radius: 10px; padding: 12px 0; font-size: 15px; font-weight: 700; cursor: pointer; }
+.ep-btn:active { background: var(--button); color: var(--button-text); }
+.ep-btn.watched { border-color: #22a355; color: #4ade80; }
+.ep-btn.current { background: var(--button); color: var(--button-text); border-color: var(--button); }
+.ep-btn.star { position: relative; }
+.ep-btn.star::after { content: '⭐'; position: absolute; top: -7px; right: -3px; font-size: 11px; }
+
+/* Player overlay */
+#player-overlay { position: fixed; inset: 0; background: #000; z-index: 50; display: flex; flex-direction: column; }
+#player-bar { display: flex; align-items: center; gap: 8px; padding: 12px; background: #111; }
+#player-bar button { background: var(--secondary-bg); color: var(--text); border: none; border-radius: 8px; padding: 8px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
+#player-title { flex: 1; text-align: center; font-weight: 700; font-size: 15px; }
+#player { width: 100%; flex: 1; background: #000; object-fit: contain; }
+#player-error { background: #3a1a1a; color: #ffb4b4; padding: 12px; font-size: 13px; line-height: 1.5; }
+#player-nav { display: flex; gap: 10px; padding: 12px; background: #111; }
+#player-nav button { flex: 1; background: var(--button); color: var(--button-text); border: none; border-radius: 10px; padding: 13px; font-size: 15px; font-weight: 700; cursor: pointer; }
+#player-nav button:disabled { opacity: .4; }
