@@ -1,0 +1,1 @@
+{"dependencies":{"telegraf":"^4.16.3"},"description":"Telegram bot + Mini App for watching a drama series (103 episodes)","main":"bot.js","name":"telegram-drama-bot","scripts":{"start":"node bot.js"},"version":"1.0.0"}
