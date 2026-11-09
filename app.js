@@ -1,5 +1,6 @@
 /* ============================================================
-   Drama Mini App v2.6 — streaming-app logic (no posters: 8movie blocks them, title cards instead)
+   Drama Mini App v2.7.1 — streaming-app logic (no posters: 8movie blocks them, title cards instead)
+   v2.7.1: QR image បង្ហាញតាមទំហំធម្មជាតិ (height:auto, max-width 320px) — កុំបង្ខំឲ្យជា square 200x200 ដែលធ្វើឲ្យរូបព្រិល + ទាញ។
    ------------------------------------------------------------
    DATA: DRAMAS comes from dramas.js (10 dramas, 573 episodes).
    Each drama: { id, title, poster, price, rating, genre, badge,
@@ -116,12 +117,25 @@ async function startAutoTopup() {
   try {
     const j = await createPaywayTopup(topupAmount);
     if (!j.ok) { msg.textContent = '❌ ' + (j.error || 'បង្កើត QR មិនបានទេ សូមសាកម្តងទៀត'); msg.style.color = '#ff8080'; return; }
-    qrBox.innerHTML = `
+    if (j.qr_image) {
+      qrBox.innerHTML = `
       <div class="topup-qr"><img src="${j.qr_image}" alt="PayWay QR"></div>
       <div class="topup-steps">1️⃣ ស្កេន QR នេះដោយ ABA app<br>2️⃣ ឬចុចប៊ូតុងខាងក្រោមដើម្បីបើក ABA app<br>3️⃣ បង់ $${j.amount} — លុយនឹងចូល wallet ដោយស្វ័យប្រវត្តិ!</div>
       ${j.abapay_deeplink ? '<button id="topup-deeplink" class="topup-deeplink">📱 បើក ABA app ដើម្បីបង់</button>' : ''}
       <div id="topup-poll" class="topup-msg">⏳ កំពុងរង់ចាំការបង់ប្រាក់... (QR មានសុពលភាព 3 នាទី)</div>`;
-    if (j.abapay_deeplink) $('topup-deeplink').addEventListener('click', () => { if (tg) tg.openLink(j.abapay_deeplink); else window.open(j.abapay_deeplink, '_blank'); });
+      if (j.abapay_deeplink) $('topup-deeplink').addEventListener('click', () => { if (tg) tg.openLink(j.abapay_deeplink); else window.open(j.abapay_deeplink, '_blank'); });
+    } else if (j.checkout_qr_url) {
+      // PayWay មិនបានផ្តល់ QR image ទេ — បើកទំព័របង់ប្រាក់របស់ PayWay ជំនួស
+      qrBox.innerHTML = `
+      <div class="topup-steps">PayWay មិនបានផ្តល់ QR image ទេ — ចុចប៊ូតុងខាងក្រោមដើម្បីបើកទំព័របង់ប្រាក់ រួចបង់ $${j.amount}៖</div>
+      <button id="topup-checkout" class="topup-deeplink">🌐 បើកទំព័របង់ប្រាក់ PayWay</button>
+      ${j.abapay_deeplink ? '<button id="topup-deeplink" class="topup-deeplink">📱 បើក ABA app ដើម្បីបង់</button>' : ''}
+      <div id="topup-poll" class="topup-msg">⏳ កំពុងរង់ចាំការបង់ប្រាក់... (មានសុពលភាព 3 នាទី)</div>`;
+      $('topup-checkout').addEventListener('click', () => { if (tg) tg.openLink(j.checkout_qr_url); else window.open(j.checkout_qr_url, '_blank'); });
+      if (j.abapay_deeplink) $('topup-deeplink').addEventListener('click', () => { if (tg) tg.openLink(j.abapay_deeplink); else window.open(j.abapay_deeplink, '_blank'); });
+    } else {
+      msg.textContent = '❌ PayWay មិនបានផ្តល់ QR ទេ សូមសាកម្តងទៀត'; msg.style.color = '#ff8080'; return;
+    }
     msg.textContent = '';
     stopAutoTopupPoll();
     let tries = 0;
