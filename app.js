@@ -1,5 +1,6 @@
 /* ============================================================
-   Drama Mini App v2.7.1 — streaming-app logic (no posters: 8movie blocks them, title cards instead)
+   Drama Mini App v2.7.2 — streaming-app logic (no posters: 8movie blocks them, title cards instead)
+   v2.7.2: បន្ថែមចំនួន $0.10 សម្រាប់សាកបង់តិចៗ + popup លោតពេល QR ផុតកំណត់ (tg.showAlert) + poll រហូតដល់ QR ផុតកំណត់ពិត (expires_in ពី server)។
    v2.7.1: QR image បង្ហាញតាមទំហំធម្មជាតិ (height:auto, max-width 320px) — កុំបង្ខំឲ្យជា square 200x200 ដែលធ្វើឲ្យរូបព្រិល + ទាញ។
    ------------------------------------------------------------
    DATA: DRAMAS comes from dramas.js (10 dramas, 573 episodes).
@@ -44,8 +45,9 @@ const getWallet = () => lsGet(LS.wallet, { balance: 0, vip: false });
    security (anyone reading this file could forge codes) — for a small
    personal shop it is the practical approach without a server. */
 const TOPUP_SECRET = 'SR-DRAMA-2026';
-const TOPUP_AMOUNTS = [1, 2, 5, 10, 20];
-let topupAmount = 5;
+const TOPUP_AMOUNTS = [0.1, 1, 2, 5, 10, 20];
+function fmtAmt(a){ return '$' + (Number.isInteger(a) ? String(a) : a.toFixed(2)); } // 0.1 -> $0.10, 5 -> $5
+let topupAmount = 0.1; // លំនាំដើម $0.10 សម្រាប់សាកបង់តិចៗសិន
 function codeHash(s) {
   let h = 0;
   for (let i = 0; i < s.length; i++) { h = (Math.imul(h, 31) + s.charCodeAt(i)) >>> 0; }
@@ -120,17 +122,17 @@ async function startAutoTopup() {
     if (j.qr_image) {
       qrBox.innerHTML = `
       <div class="topup-qr"><img src="${j.qr_image}" alt="PayWay QR"></div>
-      <div class="topup-steps">1️⃣ ស្កេន QR នេះដោយ ABA app<br>2️⃣ ឬចុចប៊ូតុងខាងក្រោមដើម្បីបើក ABA app<br>3️⃣ បង់ $${j.amount} — លុយនឹងចូល wallet ដោយស្វ័យប្រវត្តិ!</div>
+      <div class="topup-steps">1️⃣ ស្កេន QR នេះដោយ ABA app<br>2️⃣ ឬចុចប៊ូតុងខាងក្រោមដើម្បីបើក ABA app<br>3️⃣ បង់ ${fmtAmt(j.amount)} — លុយនឹងចូល wallet ដោយស្វ័យប្រវត្តិ!</div>
       ${j.abapay_deeplink ? '<button id="topup-deeplink" class="topup-deeplink">📱 បើក ABA app ដើម្បីបង់</button>' : ''}
-      <div id="topup-poll" class="topup-msg">⏳ កំពុងរង់ចាំការបង់ប្រាក់... (QR មានសុពលភាព 3 នាទី)</div>`;
+      <div id="topup-poll" class="topup-msg">⏳ កំពុងរង់ចាំការបង់ប្រាក់... (QR មានសុពលភាព ${Math.round((j.expires_in || 180) / 60)} នាទី)</div>`;
       if (j.abapay_deeplink) $('topup-deeplink').addEventListener('click', () => { if (tg) tg.openLink(j.abapay_deeplink); else window.open(j.abapay_deeplink, '_blank'); });
     } else if (j.checkout_qr_url) {
       // PayWay មិនបានផ្តល់ QR image ទេ — បើកទំព័របង់ប្រាក់របស់ PayWay ជំនួស
       qrBox.innerHTML = `
-      <div class="topup-steps">PayWay មិនបានផ្តល់ QR image ទេ — ចុចប៊ូតុងខាងក្រោមដើម្បីបើកទំព័របង់ប្រាក់ រួចបង់ $${j.amount}៖</div>
+      <div class="topup-steps">PayWay មិនបានផ្តល់ QR image ទេ — ចុចប៊ូតុងខាងក្រោមដើម្បីបើកទំព័របង់ប្រាក់ រួចបង់ ${fmtAmt(j.amount)}៖</div>
       <button id="topup-checkout" class="topup-deeplink">🌐 បើកទំព័របង់ប្រាក់ PayWay</button>
       ${j.abapay_deeplink ? '<button id="topup-deeplink" class="topup-deeplink">📱 បើក ABA app ដើម្បីបង់</button>' : ''}
-      <div id="topup-poll" class="topup-msg">⏳ កំពុងរង់ចាំការបង់ប្រាក់... (មានសុពលភាព 3 នាទី)</div>`;
+      <div id="topup-poll" class="topup-msg">⏳ កំពុងរង់ចាំការបង់ប្រាក់... (មានសុពលភាព ${Math.round((j.expires_in || 180) / 60)} នាទី)</div>`;
       $('topup-checkout').addEventListener('click', () => { if (tg) tg.openLink(j.checkout_qr_url); else window.open(j.checkout_qr_url, '_blank'); });
       if (j.abapay_deeplink) $('topup-deeplink').addEventListener('click', () => { if (tg) tg.openLink(j.abapay_deeplink); else window.open(j.abapay_deeplink, '_blank'); });
     } else {
@@ -139,6 +141,7 @@ async function startAutoTopup() {
     msg.textContent = '';
     stopAutoTopupPoll();
     let tries = 0;
+    const maxTries = Math.ceil((j.expires_in || 180) / 3); // poll រហូតដល់ QR ផុតកំណត់ពិត
     autoTopupTimer = setInterval(async () => {
       tries++;
       try {
@@ -148,17 +151,23 @@ async function startAutoTopup() {
           const w = getWallet(); w.balance = s.balance; lsSet(LS.wallet, w);
           $('wallet-balance-2').textContent = w.balance.toFixed(2);
           $('wallet-balance').textContent = w.balance.toFixed(2);
-          const poll = $('topup-poll'); if (poll) { poll.textContent = '✅ បង់ប្រាក់ជោគជ័យ! បញ្ចូល $' + s.amount + ' — សមតុល្យបច្ចុប្បន្ន៖ $' + w.balance.toFixed(2); poll.style.color = '#4ade80'; }
+          const poll = $('topup-poll'); if (poll) { poll.textContent = '✅ បង់ប្រាក់ជោគជ័យ! បញ្ចូល ' + fmtAmt(s.amount) + ' — សមតុល្យបច្ចុប្បន្ន៖ $' + w.balance.toFixed(2); poll.style.color = '#4ade80'; }
         } else if (s && s.status === 'expired') {
           stopAutoTopupPoll();
-          const poll = $('topup-poll'); if (poll) { poll.textContent = '⌛ QR នេះផុតកំណត់ហើយ — សូមបង្កើត QR ថ្មីម្តងទៀត។'; poll.style.color = '#ff8080'; }
+          notifyQrExpired();
         }
       } catch (e) {}
-      if (tries > 60) stopAutoTopupPoll(); // stop after ~3 min
+      if (tries > maxTries) { stopAutoTopupPoll(); notifyQrExpired(); } // QR ផុតកំណត់ — លោត popup ប្រាប់
     }, 3000);
   } catch (e) {
     msg.textContent = '❌ មិនអាចភ្ជាប់ទៅ PayServer បានទេ — សូមពិនិត្យថា server ដំណើរការឬអត់។'; msg.style.color = '#ff8080';
   }
+}
+// Popup លោតប្រាប់ពេល QR ផុតកំណត់ (Telegram native alert + អត្ថបទក្នុង app)
+function notifyQrExpired() {
+  const poll = $('topup-poll');
+  if (poll) { poll.textContent = '⌛ QR នេះផុតកំណត់ហើយ — សូមបង្កើត QR ថ្មីម្តងទៀត។'; poll.style.color = '#ff8080'; }
+  if (tg && tg.showAlert) { try { tg.showAlert('⌛ QR នេះផុតកំណត់ហើយ!\n\nសូមបង្កើត QR ថ្មីម្តងទៀតដើម្បីបង់ប្រាក់។'); } catch (e) {} }
 }
 function saveProgress(dramaId, ep, time, watched) {
   const p = getProgress();
@@ -323,24 +332,24 @@ function renderTopup() {
 function renderTopupAuto(box) {
   box.innerHTML = `
     <div class="topup-label">💳 បញ្ចូលលុយ (Top Up) — Auto ⚡ PayWay</div>
-    <div class="topup-amounts">${TOPUP_AMOUNTS.map(a => `<button class="amt-btn ${a === topupAmount ? 'on' : ''}" data-amt="${a}">$${a}</button>`).join('')}</div>
-    <button id="topup-create" class="topup-create-btn">⚡ បង្កើត QR បង់ $${topupAmount}</button>
+    <div class="topup-amounts">${TOPUP_AMOUNTS.map(a => `<button class="amt-btn ${a === topupAmount ? 'on' : ''}" data-amt="${a}">${fmtAmt(a)}</button>`).join('')}</div>
+    <button id="topup-create" class="topup-create-btn">⚡ បង្កើត QR បង់ ${fmtAmt(topupAmount)}</button>
     <div id="topup-auto-qr"></div>
     <div id="topup-msg" class="topup-msg"></div>
     <div class="topup-mode-toggle" id="topup-to-manual">📷 ប្រើវិធី Manual (KHQR + លេខកូដ) វិញ</div>`;
-  box.querySelectorAll('.amt-btn').forEach(b => b.addEventListener('click', () => { topupAmount = parseInt(b.dataset.amt, 10); renderTopup(); }));
+  box.querySelectorAll('.amt-btn').forEach(b => b.addEventListener('click', () => { topupAmount = parseFloat(b.dataset.amt); renderTopup(); }));
   $('topup-create').addEventListener('click', startAutoTopup);
   $('topup-to-manual').addEventListener('click', () => { topupMode = 'manual'; renderTopup(); });
 }
 function renderTopupManual(box, autoAvailable) {
   box.innerHTML = `
     <div class="topup-label">💳 បញ្ចូលលុយ (Top Up) — KHQR</div>
-    <div class="topup-amounts">${TOPUP_AMOUNTS.map(a => `<button class="amt-btn ${a === topupAmount ? 'on' : ''}" data-amt="${a}">$${a}</button>`).join('')}</div>
+    <div class="topup-amounts">${TOPUP_AMOUNTS.map(a => `<button class="amt-btn ${a === topupAmount ? 'on' : ''}" data-amt="${a}">${fmtAmt(a)}</button>`).join('')}</div>
     <div class="topup-qr"><img src="khqr.jpg" alt="KHQR" onerror="this.style.display='none';document.getElementById('topup-qr-missing').style.display='block'"></div>
     <div id="topup-qr-missing" class="topup-qr-missing" style="display:none">📷 Admin មិនទាន់ដាក់រូប KHQR ទេ</div>
     <div class="topup-steps">
       1️⃣ ជ្រើសចំនួនលុយខាងលើ<br>
-      2️⃣ ស្កេន QR បង់លុយតាម ABA / Wing / ធនាគារផ្សេង ($${topupAmount})<br>
+      2️⃣ ស្កេន QR បង់លុយតាម ABA / Wing / ធនាគារផ្សេង (${fmtAmt(topupAmount)})<br>
       3️⃣ ផ្ញើ screenshot មក admin តាម Telegram<br>
       4️⃣ Admin នឹងផ្ញើ <b>លេខកូដបញ្ចូលលុយ</b> មកឲ្យអ្នក<br>
       5️⃣ បញ្ចូលលេខកូដខាងក្រោម — លុយចូល wallet ភ្លាមៗ!
@@ -351,7 +360,7 @@ function renderTopupManual(box, autoAvailable) {
     </div>
     <div id="topup-msg" class="topup-msg"></div>
     ${autoAvailable ? '<div class="topup-mode-toggle" id="topup-to-auto">⚡ ប្រើវិធី Auto (PayWay QR) វិញ</div>' : ''}`;
-  box.querySelectorAll('.amt-btn').forEach(b => b.addEventListener('click', () => { topupAmount = parseInt(b.dataset.amt, 10); renderTopup(); }));
+  box.querySelectorAll('.amt-btn').forEach(b => b.addEventListener('click', () => { topupAmount = parseFloat(b.dataset.amt); renderTopup(); }));
   $('topup-redeem').addEventListener('click', () => {
     const r = redeemTopupCode($('topup-code').value);
     const msg = $('topup-msg');
