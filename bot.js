@@ -60,13 +60,13 @@ const bot = new Telegraf(cfg.BOT_TOKEN);
 bot.start(async (ctx) => {
   const caption =
     `🎬 <b>សួស្តី ${ctx.from.first_name}!</b>\n\n` +
-    `សូមស្វាគមន៍មកកាន់ <b>ផ្សាររៀង</b> — ទស្សនារឿងភាគ និងរឿងដុំ លើ App Telegram!\n\n` +
+    `សូមស្វាគមន៍មកកាន់ <b>ពី Drama mini app</b> — ទស្សនារឿងភាគ និងរឿងដុំ លើ App Telegram!\n\n` +
     `✅ ទស្សនាគ្រប់រឿងក្នុង App ដែរងាយស្រួល\n` +
     `🔥 កម្រិត Full HD 1080p ទស្សនាដោយរលូន 🍿\n` +
     `📺 10 រឿង · 573 ភាគ — មានរឿងថ្មីៗជាប្រចាំ\n\n` +
     `👇 សូមចុចប៊ូតុងខាងក្រោមដើម្បីចូលទស្សនា៖`;
   const openAppBtn = Markup.inlineKeyboard([
-    Markup.button.webApp('▶ OPEN APP', cfg.WEBAPP_URL),
+    Markup.button.webApp('▶ មើលឥឡូវនេះ', cfg.WEBAPP_URL),
   ]);
   try {
     await ctx.replyWithPhoto(BANNER_PHOTO, {
