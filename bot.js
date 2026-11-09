@@ -1,5 +1,5 @@
 // ============================================================
-// Telegram Drama Bot v2.2 — Node.js + Telegraf
+// Telegram Drama Bot v2.3 — Node.js + Telegraf
 // ------------------------------------------------------------
 // WHAT THIS BOT DOES:
 //   /start → sends a custom banner photo (banner.jpg, hosted on
@@ -64,7 +64,7 @@ bot.start(async (ctx) => {
     `✅ ទស្សនាគ្រប់រឿងក្នុង App ដែរងាយស្រួល\n` +
     `🔥 កម្រិត Full HD 1080p ទស្សនាដោយរលូន 🍿\n` +
     `📺 10 រឿង · 573 ភាគ — មានរឿងថ្មីៗជាប្រចាំ\n\n` +
-    `👇 ចុច <a href="${cfg.WEBAPP_URL}">🎬 មើលរឿង</a> ដើម្បីចូលទស្សនា៖`;
+    `👇 សូមចុចប៊ូតុង "▶ មើលឥឡូវនេះ" ខាងក្រោមដើម្បីចូលទស្សនា៖`;
   const openAppBtn = Markup.inlineKeyboard([
     Markup.button.webApp('▶ មើលឥឡូវនេះ', cfg.WEBAPP_URL),
   ]);
@@ -106,7 +106,7 @@ bot.help((ctx) => {
 });
 
 bot.launch().then(() => {
-  console.log('✅ Drama bot v2.2 is running. Open it in Telegram and press /start');
+  console.log('✅ Drama bot v2.3 is running. Open it in Telegram and press /start');
   console.log('   Mini App URL:', cfg.WEBAPP_URL);
 });
 process.once('SIGINT', () => bot.stop('SIGINT'));
