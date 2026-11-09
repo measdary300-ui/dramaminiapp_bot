@@ -59,7 +59,7 @@ const bot = new Telegraf(cfg.BOT_TOKEN);
 
 bot.start(async (ctx) => {
   const caption =
-    `ក <b>សួស្តី ${ctx.from.first_name}!</b>\n\n` +
+    `🎬​​ <b>សួស្តី ${ctx.from.first_name}!</b>\n\n` +
     `សូមស្វាគមន៍មកកាន់ <b>Drama mini app</b> — ទស្សនារឿងភាគ និងរឿងដុំ លើ App Telegram!\n\n` +
     `✅ ទស្សនាគ្រប់រឿងក្នុង App ដែរងាយស្រួល\n` +
     `🔥 កម្រិត Full HD 1080p ទស្សនាដោយរលូន 🍿\n` +
