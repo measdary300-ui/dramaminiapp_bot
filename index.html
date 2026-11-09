@@ -3,46 +3,137 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>十八岁太奶奶驾到，重整家族荣耀 5 — មើលរឿង</title>
+<title>ផ្សាររៀង — មើលរឿង</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 <div id="app">
-  <!-- Drama header -->
-  <header id="drama-header">
-    <img id="poster" src="https://www.8movie.com/p/19087-tprf.jpg" alt="Poster" referrerpolicy="no-referrer">
-    <div class="drama-info">
-      <h1>十八岁太奶奶驾到<br>重整家族荣耀 5</h1>
-      <p class="drama-sub">Reborn at 18: The Great-Grandmother Takes Charge — Season 5</p>
-      <p class="drama-meta">📺 103 ភាគ · 🇨🇳 រឿងចិន · 🎬 Hongguo</p>
-      <button id="continue-btn" class="hidden">▶ បន្តមើលភាគ <span id="continue-ep"></span></button>
+
+  <!-- ===== HOME ===== -->
+  <section id="screen-home" class="screen">
+    <header id="topbar">
+      <div class="brand">
+        <div class="logo">🎬</div>
+        <div>
+          <div class="brand-name">ផ្សាររៀង</div>
+          <div class="brand-greet" id="greeting">សួស្តី!</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button id="vip-btn" class="pill gold">👑 VIP</button>
+        <button id="wallet-chip" class="pill">💳 $<span id="wallet-balance">0.00</span></button>
+      </div>
+    </header>
+
+    <div id="search-wrap">
+      <input id="search" type="search" placeholder="🔍 ស្វែងរកចំណងជើងរឿង...">
     </div>
-  </header>
 
-  <!-- Episode search -->
-  <div id="ep-tools">
-    <input id="ep-jump" type="number" min="1" max="103" placeholder="ទៅភាគ... (1-103)">
-    <button id="ep-go">ទៅ</button>
-  </div>
+    <!-- Featured carousel -->
+    <div id="carousel"></div>
+    <div id="carousel-dots"></div>
 
-  <!-- Episode grid -->
-  <main>
-    <h2>📋 បញ្ជីភាគទាំងអស់ (<span id="ep-count">103</span>)</h2>
-    <div id="episodes"></div>
-  </main>
+    <!-- Trending -->
+    <div class="section-head">
+      <h2>🔥 កំពុងពេញនិយម</h2>
+      <button class="see-all" data-goto="dramas">មើលទាំងអស់ →</button>
+    </div>
+    <div id="trending" class="drama-row"></div>
 
-  <!-- Video player overlay -->
+    <!-- Free dramas -->
+    <div class="section-head">
+      <h2>🆓 មើលឥតគិតថ្លៃ</h2>
+      <button class="see-all" data-goto="dramas">មើលទាំងអស់ →</button>
+    </div>
+    <div id="free-list" class="drama-row"></div>
+
+    <!-- Continue watching -->
+    <div id="continue-section" class="hidden">
+      <div class="section-head"><h2>▶ បន្តមើល</h2></div>
+      <div id="continue-list" class="drama-row"></div>
+    </div>
+  </section>
+
+  <!-- ===== DRAMAS (catalog) ===== -->
+  <section id="screen-dramas" class="screen hidden">
+    <h2 class="page-title">🎬 រឿងទាំងអស់</h2>
+    <div id="catalog" class="drama-grid"></div>
+  </section>
+
+  <!-- ===== DRAMA DETAIL ===== -->
+  <section id="screen-detail" class="screen hidden">
+    <button class="back-btn" data-goto="home">← ត្រឡប់</button>
+    <div id="detail-hero"></div>
+    <div id="detail-info"></div>
+    <div class="detail-actions">
+      <button id="detail-play">▶ ចាក់ភាគ 1</button>
+      <button id="detail-mylist">＋ បញ្ជីរបស់ខ្ញុំ</button>
+    </div>
+    <h3 class="ep-title">📋 បញ្ជីភាគ (<span id="detail-ep-count"></span>)</h3>
+    <div id="detail-episodes" class="ep-grid"></div>
+  </section>
+
+  <!-- ===== MY LIST ===== -->
+  <section id="screen-mylist" class="screen hidden">
+    <h2 class="page-title">🔖 បញ្ជីរបស់ខ្ញុំ</h2>
+    <div id="mylist" class="drama-grid"></div>
+    <p id="mylist-empty" class="empty-msg hidden">មិនទាន់មានរឿងទេ — ចុច "＋ បញ្ជីរបស់ខ្ញុំ" នៅលើរឿងណាមួយដើម្បីរក្សាទុក។</p>
+  </section>
+
+  <!-- ===== WALLET ===== -->
+  <section id="screen-wallet" class="screen hidden">
+    <h2 class="page-title">💳 កាបូបលុយ</h2>
+    <div class="wallet-card">
+      <div class="wallet-label">សមតុល្យរបស់អ្នក</div>
+      <div class="wallet-amount">$<span id="wallet-balance-2">0.00</span></div>
+      <button id="topup-btn">＋ បញ្ចូលលុយ (Top Up)</button>
+      <p class="wallet-note">ដើម្បីបញ្ចូលលុយ — ទាក់ទង admin តាម Telegram ហើយផ្ញើលុយតាម ABA / Wing។ Admin នឹងបញ្ចូលសមតុល្យឲ្យអ្នក។</p>
+    </div>
+    <div class="wallet-card">
+      <div class="wallet-label">👑 VIP</div>
+      <div id="vip-status">អ្នកមិនទាន់ជា VIP ទេ</div>
+      <p class="wallet-note">VIP៖ មើលរឿងទាំងអស់ឥតគិតថ្លៃ + គ្មានការរង់ចាំ។ ទាក់ទង admin ដើម្បីជាវ VIP។</p>
+    </div>
+  </section>
+
+  <!-- ===== ACCOUNT ===== -->
+  <section id="screen-account" class="screen hidden">
+    <h2 class="page-title">👤 គណនី</h2>
+    <div class="account-card">
+      <div class="avatar" id="account-avatar">👤</div>
+      <div class="account-name" id="account-name">អ្នកប្រើ</div>
+      <div class="account-sub" id="account-id"></div>
+    </div>
+    <div class="account-rows">
+      <div class="account-row"><span>👑 VIP</span><b id="account-vip">មិនទាន់មាន</b></div>
+      <div class="account-row"><span>💳 សមតុល្យ</span><b>$<span id="account-balance">0.00</span></b></div>
+      <div class="account-row"><span>🔖 រឿងក្នុងបញ្ជី</span><b id="account-mylist-count">0</b></div>
+      <div class="account-row"><span>▶ បានមើល</span><b id="account-watched-count">0 ភាគ</b></div>
+    </div>
+    <p class="version">Drama Mini App v2.0</p>
+  </section>
+
+  <!-- ===== BOTTOM NAV ===== -->
+  <nav id="bottom-nav">
+    <button data-nav="home" class="active">🏠<span>ទំព័រដើម</span></button>
+    <button data-nav="dramas">🎬<span>រឿង</span></button>
+    <button data-nav="mylist">🔖<span>បញ្ជីខ្ញុំ</span></button>
+    <button data-nav="wallet">💳<span>កាបូបលុយ</span></button>
+    <button data-nav="account">👤<span>គណនី</span></button>
+  </nav>
+
+  <!-- ===== PLAYER OVERLAY ===== -->
   <div id="player-overlay" class="hidden">
     <div id="player-bar">
       <button id="player-back">← ត្រឡប់</button>
       <span id="player-title">ភាគ 1</span>
-      <button id="player-open-8movie">🌐 បើកនៅ 8movie</button>
+      <button id="player-open-8movie">🌐 8movie</button>
     </div>
     <video id="player" controls playsinline preload="metadata"></video>
     <div id="player-error" class="hidden">
       ⚠️ វីដេអូនេះចាក់មិនបានក្នុង Mini App នេះទេ (CDN របស់ 8movie ត្រូវការ Referer ពី 8movie.com)។
-      <br>សូមចុច "បើកនៅ 8movie" ដើម្បីមើលនៅលើ website វិញ — ឬទាញយកដោយ SR Download។
+      <br>សូមចុច "8movie" ដើម្បីមើលនៅលើ website វិញ — ឬទាញយកដោយ SR Download។
     </div>
     <div id="player-nav">
       <button id="prev-ep">← ភាគមុន</button>
@@ -50,7 +141,7 @@
     </div>
   </div>
 </div>
-<script src="episodes.js"></script>
+<script src="dramas.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
