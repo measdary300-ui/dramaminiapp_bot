@@ -76,7 +76,7 @@ function redeemTopupCode(raw) {
    server every 3s -> when PayWay reports APPROVED the wallet
    is credited automatically. The manual code flow stays as a
    fallback (toggle at the bottom of the Top Up box). */
-const PAYSERVER_URL = 'https://payserver-production.up.railway.app'; (ឧ. https://....up.railway.app) — កុំដាក់ / នៅចុងក្រោយ
+const PAYSERVER_URL = 'https://payserver-production.up.railway.app';
 function payserverOn() { return PAYSERVER_URL && PAYSERVER_URL.indexOf('http') === 0; }
 function getTelegramId() {
   const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
