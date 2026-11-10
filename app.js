@@ -1,9 +1,13 @@
 /* ============================================================
-   Drama Mini App v2.7.2 — streaming-app logic (no posters: 8movie blocks them, title cards instead)
+   Drama Mini App v2.8 — streaming-app logic (Cloudflare proxy: real posters + in-app video + carousel)
+   v2.8: Posters + videos load through a free Cloudflare Worker proxy (PROXY_URL below) which adds the
+   8movie Referer — so REAL posters show (no more title cards), videos play INSIDE the Mini App,
+   and the featured carousel is back at the top of Home. If PROXY_URL is empty, the app falls back
+   to direct URLs (title cards + 8movie button, like v2.7.2).
    v2.7.2: បន្ថែមចំនួន $0.10 សម្រាប់សាកបង់តិចៗ + popup លោតពេល QR ផុតកំណត់ (tg.showAlert) + poll រហូតដល់ QR ផុតកំណត់ពិត (expires_in ពី server)។
    v2.7.1: QR image បង្ហាញតាមទំហំធម្មជាតិ (height:auto, max-width 320px) — កុំបង្ខំឲ្យជា square 200x200 ដែលធ្វើឲ្យរូបព្រិល + ទាញ។
    ------------------------------------------------------------
-   DATA: DRAMAS comes from dramas.js (10 dramas, 573 episodes).
+   DATA: DRAMAS comes from dramas.js (11 dramas, 613 episodes).
    Each drama: { id, title, poster, price, rating, genre, badge,
    featured, episodes: [{ep, url}] }.
 
@@ -81,6 +85,26 @@ function redeemTopupCode(raw) {
    fallback (toggle at the bottom of the Top Up box). */
 const PAYSERVER_URL = 'https://payserver-production.up.railway.app';
 function payserverOn() { return PAYSERVER_URL && PAYSERVER_URL.indexOf('http') === 0; }
+
+/* ---------- Cloudflare proxy (posters + videos) ----------
+   PROXY_URL = the public URL of your Cloudflare Worker
+   (e.g. https://drama-proxy-xxxx.workers.dev).
+   The Worker fetches 8movie posters + mp4s WITH the 8movie
+   Referer header (which a web page cannot set itself) and
+   streams them back — so real posters show and videos play
+   INSIDE the Mini App instead of jumping to 8movie.com.
+   Leave it EMPTY ('') to use direct 8movie URLs (title cards
+   + 8movie button, like v2.7.2). See drama-proxy-worker.js
+   + Cloudflare-Proxy-Setup-ខ្មែរ.txt for the Worker setup.
+   IMPORTANT: no trailing slash (/) at the end of the URL. */
+const PROXY_URL = ''; // <-- ដាក់ Worker URL របស់អ្នកនៅទីនេះ (ឧ. https://drama-proxy-xxxx.workers.dev)
+function proxyOn() { return PROXY_URL && PROXY_URL.indexOf('http') === 0; }
+function proxify(url) {
+  if (!url || !proxyOn()) return url;
+  return PROXY_URL.replace(/\/$/, '') + '/?u=' + encodeURIComponent(url);
+}
+function posterUrl(d) { return proxify(d.poster); }
+function videoUrl(u) { return proxify(u); }
 function getTelegramId() {
   const u = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
   return u ? String(u.id) : null;
@@ -200,19 +224,70 @@ document.querySelectorAll('[data-goto]').forEach(b => {
 
 /* ---------- drama cards ---------- */
 function money(n) { return n === 0 ? 'FREE' : '$' + n.toFixed(2); }
+// Poster image layered over the title-card fallback: the <img> covers
+// the fallback when it loads (via the proxy); if it fails, onerror
+// removes it and the title card shows instead. So cards never break.
+function posterImgHtml(d) {
+  return `<div class="dc-poster-fallback"><span class="dc-fb-ico">🎬</span><span class="dc-fb-title">${d.title}</span></div><img class="dc-poster-img" src="${posterUrl(d)}" alt="" loading="lazy" onerror="this.remove()">`;
+}
 function dramaCard(d) {
   const tag = d.price === 0
     ? '<span class="price-tag free-tag">FREE</span>'
     : `<span class="price-tag">${money(d.price)}</span>`;
   return `<div class="drama-card" onclick="openDrama(${d.id})">
-    <div class="dc-poster-wrap"><div class="dc-poster-fallback"><span class="dc-fb-ico">🎬</span><span class="dc-fb-title">${d.title}</span></div>${tag}</div>
+    <div class="dc-poster-wrap">${posterImgHtml(d)}${tag}</div>
     <div class="dc-title">${d.title}</div>
     <div class="dc-meta">⭐ ${d.rating} · ${d.episodes.length} ភាគ · ${d.genre}</div>
   </div>`;
 }
 
+/* ---------- featured carousel (Home top) ---------- */
+let carouselIdx = 0;
+let carouselTimer = null;
+function carouselSlides() {
+  const feat = DRAMAS.filter(d => d.featured);
+  const hot = DRAMAS.filter(d => !d.featured && d.badge === 'HOT');
+  const nw = DRAMAS.filter(d => !d.featured && d.badge === 'NEW');
+  return [...feat, ...hot, ...nw].slice(0, 5);
+}
+function renderCarousel() {
+  const box = $('carousel');
+  if (!box) return;
+  const slides = carouselSlides();
+  if (!slides.length) { box.innerHTML = ''; return; }
+  box.innerHTML = slides.map((d, i) => `
+    <div class="car-slide ${i === 0 ? 'on' : ''}" onclick="openDrama(${d.id})">
+      <div class="car-poster-fallback"></div>
+      <img class="car-img" src="${posterUrl(d)}" alt="" loading="lazy" onerror="this.remove()">
+      <div class="car-info">
+        ${d.badge ? `<span class="slide-badge">${d.badge === 'HOT' ? '🔥 ក្តៅៗ' : '✨ រឿងថ្មី'}</span>` : ''}
+        <div class="car-title">${d.title}</div>
+        <div class="car-meta">⭐ ${d.rating} · ${d.episodes.length} ភាគ · ${money(d.price)} · ${d.genre}</div>
+      </div>
+    </div>`).join('') + `
+    <div class="car-dots">${slides.map((_, i) => `<span class="car-dot ${i === 0 ? 'on' : ''}" data-i="${i}"></span>`).join('')}</div>`;
+  box.querySelectorAll('.car-dot').forEach(dot => dot.addEventListener('click', (ev) => { ev.stopPropagation(); showSlide(parseInt(dot.dataset.i, 10)); }));
+  startCarousel();
+}
+function showSlide(i) {
+  const box = $('carousel');
+  if (!box) return;
+  const slides = box.querySelectorAll('.car-slide');
+  const dots = box.querySelectorAll('.car-dot');
+  if (!slides.length) return;
+  carouselIdx = ((i % slides.length) + slides.length) % slides.length;
+  slides.forEach((s, j) => s.classList.toggle('on', j === carouselIdx));
+  dots.forEach((dt, j) => dt.classList.toggle('on', j === carouselIdx));
+}
+function startCarousel() {
+  stopCarousel();
+  carouselTimer = setInterval(() => showSlide(carouselIdx + 1), 4000);
+}
+function stopCarousel() { if (carouselTimer) { clearInterval(carouselTimer); carouselTimer = null; } }
+
 /* ---------- home ---------- */
 function renderHome() {
+  renderCarousel();
 
   $('trending').innerHTML = DRAMAS.slice(0, 8).map(dramaCard).join('');
   $('free-list').innerHTML = DRAMAS.filter(d => d.price === 0).map(dramaCard).join('');
@@ -225,7 +300,7 @@ function renderHome() {
     $('continue-list').innerHTML = cont.map(d => {
       const lastEp = p[d.id].lastEp;
       return `<div class="drama-card" onclick="openDrama(${d.id})">
-        <div class="dc-poster-wrap"><div class="dc-poster-fallback"><span class="dc-fb-ico">🎬</span><span class="dc-fb-title">${d.title}</span></div><span class="price-tag">▶ ភាគ ${lastEp}</span></div>
+        <div class="dc-poster-wrap">${posterImgHtml(d)}<span class="price-tag">▶ ភាគ ${lastEp}</span></div>
         <div class="dc-title">${d.title}</div>
         <div class="dc-meta">បន្តពីភាគ ${lastEp}</div>
       </div>`;
@@ -265,6 +340,7 @@ function openDrama(id) {
   const watched = new Set(p.watched || []);
   $('detail-hero').innerHTML = `
     <div class="detail-hero-fallback"></div>
+    <img class="detail-hero-img" src="${posterUrl(d)}" alt="" onerror="this.remove()">
     <div class="slide-info">
       ${d.badge ? `<span class="slide-badge">${d.badge === 'HOT' ? '🔥 ក្តៅៗ' : '✨ រឿងថ្មី'}</span>` : ''}
       <div class="slide-title">${d.title}</div>
@@ -404,7 +480,7 @@ function playEpisode(dramaId, ep) {
   $('player-error').classList.add('hidden');
   $('player-overlay').classList.remove('hidden');
   document.body.style.overflow = 'hidden';
-  v.src = e.url;
+  v.src = videoUrl(e.url); // via Cloudflare proxy (plays in-app); direct URL if PROXY_URL is empty
   v.load();
   const p = (getProgress()[dramaId]) || {};
   v.onloadedmetadata = () => {

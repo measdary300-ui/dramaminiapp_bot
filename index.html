@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>មើលរឿង</title>
+<title>ផ្សាររៀង — មើលរឿង</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="stylesheet" href="styles.css">
 </head>
@@ -16,7 +16,7 @@
       <div class="brand">
         <div class="logo">🎬</div>
         <div>
-          <div class="brand-name">Drama mini app </div>
+          <div class="brand-name">ផ្សាររៀង</div>
           <div class="brand-greet" id="greeting">សួស្តី!</div>
         </div>
       </div>
@@ -29,6 +29,9 @@
     <div id="search-wrap">
       <input id="search" type="search" placeholder="🔍 ស្វែងរកចំណងជើងរឿង...">
     </div>
+
+    <!-- Featured carousel (new / hot dramas, auto-sliding) -->
+    <div id="carousel" class="carousel"></div>
 
     <!-- Trending -->
     <div class="section-head">
@@ -110,7 +113,7 @@
       <div class="account-row"><span>🔖 រឿងក្នុងបញ្ជី</span><b id="account-mylist-count">0</b></div>
       <div class="account-row"><span>▶ បានមើល</span><b id="account-watched-count">0 ភាគ</b></div>
     </div>
-    <p class="version">Drama Mini App v2.7.2</p>
+    <p class="version">Drama Mini App v2.8</p>
   </section>
 
   <!-- ===== BOTTOM NAV ===== -->
@@ -131,7 +134,7 @@
     </div>
     <video id="player" controls playsinline preload="metadata"></video>
     <div id="player-error" class="hidden">
-      ⚠️ វីដេអូនេះចាក់មិនបានក្នុង Mini App នេះទេ (CDN របស់ 8movie ត្រូវការ Referer ពី 8movie.com)។
+      ⚠️ វីដេអូនេះចាក់មិនបានក្នុង Mini App នេះទេ។
       <br>សូមចុច "8movie" ដើម្បីមើលនៅលើ website វិញ — ឬទាញយកដោយ SR Download។
     </div>
     <div id="player-nav">

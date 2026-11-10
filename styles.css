@@ -31,15 +31,32 @@ body { background: var(--bg); color: var(--text); font-family: -apple-system, 'S
 #search-wrap { padding: 4px 0 12px; }
 #search { width: 100%; padding: 12px 14px; border-radius: 12px; border: 1px solid var(--border); background: var(--card); color: var(--text); font-size: 15px; }
 
-/* Poster fallback (posters removed — 8movie blocks them, so cards show the title instead) */
+/* Poster fallback (title card behind the poster image: the <img> covers
+   it when it loads via the proxy; if the image fails, the title card
+   shows instead — so cards never break) */
 .dc-poster-fallback { width: 100%; aspect-ratio: 3/4; border-radius: 12px; background: linear-gradient(160deg, #3a1c5c, #16213e 55%, #123a5c); border: 1px solid var(--border); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; padding: 10px; text-align: center; }
+.dc-poster-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; border-radius: 12px; }
 .dc-fb-ico { font-size: 28px; }
 .dc-fb-title { font-size: 12px; font-weight: 800; line-height: 1.35; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; overflow: hidden; }
 .detail-hero-fallback { width: 100%; aspect-ratio: 16/9; background: linear-gradient(135deg, #3a1c5c, #16213e 60%, #123a5c); }
+.detail-hero-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .slide-info { position: absolute; left: 0; right: 0; bottom: 0; padding: 40px 14px 12px; background: linear-gradient(transparent, rgba(0,0,0,.85)); }
 .slide-title { font-size: 18px; font-weight: 800; }
 .slide-meta { font-size: 12px; color: #ddd; margin-top: 4px; }
 .slide-badge { display: inline-block; background: var(--accent); color: #fff; font-size: 11px; font-weight: 800; border-radius: 6px; padding: 3px 8px; margin-right: 6px; }
+
+/* Featured carousel (Home top — new / hot dramas, auto-sliding) */
+.carousel { position: relative; border-radius: 16px; overflow: hidden; aspect-ratio: 16/9; margin: 2px 0 6px; background: var(--card); }
+.car-slide { position: absolute; inset: 0; opacity: 0; transition: opacity .5s; cursor: pointer; }
+.car-slide.on { opacity: 1; z-index: 1; }
+.car-poster-fallback { position: absolute; inset: 0; background: linear-gradient(135deg, #3a1c5c, #16213e 60%, #123a5c); }
+.car-img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.car-info { position: absolute; left: 0; right: 0; bottom: 0; padding: 44px 14px 12px; background: linear-gradient(transparent, rgba(0,0,0,.88)); z-index: 2; }
+.car-title { font-size: 17px; font-weight: 800; }
+.car-meta { font-size: 12px; color: #ddd; margin-top: 4px; }
+.car-dots { position: absolute; top: 10px; right: 12px; display: flex; gap: 6px; z-index: 3; }
+.car-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(255,255,255,.45); cursor: pointer; }
+.car-dot.on { background: #fff; }
 
 /* Sections */
 .section-head { display: flex; justify-content: space-between; align-items: center; margin: 18px 0 10px; }
