@@ -8,8 +8,7 @@ const DRAMAS = [
   {
 id: 90001,
 title: "ស្នេហ៍ល្បួងចិត្តនៅរាត្រី",
-poster: "https://drive.usercontent.google.com/download?id=1V_6aaiNpyT4oxtHzE8zAZXaxvE5ogXFj&export=download&confirm=t
-",
+poster: "https://drive.usercontent.google.com/download?id=1V_6aaiNpyT4oxtHzE8zAZXaxvE5ogXFj&export=download&confirm=t",
 price: 0,
 rating: 9.0,
 genre: "Drama",
