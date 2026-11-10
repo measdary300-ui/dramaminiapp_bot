@@ -1,5 +1,9 @@
 // ============================================================
-// Telegram Drama Bot v2.4 — Node.js + Telegraf
+// Telegram Drama Bot v2.4.1 — Node.js + Telegraf
+// v2.4.1: BANNER_PHOTO now ends with ?v=2 (cache-bust) so Telegram
+// fetches the banner FRESH instead of serving its cached copy of
+// an older banner.jpg. GitHub Pages ignores the query for static
+// files, so it still serves banner.jpg.
 // v2.4: BANNER_PHOTO strips the ?v=... cache-bust query from WEBAPP_URL
 // before appending /banner.jpg (WEBAPP_URL now has ?v=2.8 — appending
 // after the query gave .../?v=2.8/banner.jpg, which GitHub Pages
@@ -59,8 +63,9 @@ if (!cfg.WEBAPP_URL || cfg.WEBAPP_URL.includes('PASTE')) {
 // NOTE: strip any ?v=... query from WEBAPP_URL first — WEBAPP_URL
 // has a ?v=2.8 cache-bust, and appending /banner.jpg after the
 // query (…/?v=2.8/banner.jpg) makes GitHub Pages return index.html
-// instead of the banner image!
-const BANNER_PHOTO = cfg.WEBAPP_URL.split('?')[0].replace(/\/?$/, '/') + 'banner.jpg';
+// instead of the banner image! The trailing ?v=2 is a cache-bust
+// for Telegram (forces a fresh download of banner.jpg).
+const BANNER_PHOTO = cfg.WEBAPP_URL.split('?')[0].replace(/\/?$/, '/') + 'banner.jpg?v=2';
 const BANNER_FALLBACK = 'https://www.8movie.com/p/19087-tprf.jpg';
 
 const bot = new Telegraf(cfg.BOT_TOKEN);
@@ -71,10 +76,10 @@ bot.start(async (ctx) => {
     `សូមស្វាគមន៍មកកាន់ <b>Drama mini app</b> — ទស្សនារឿងភាគ និងរឿងដុំ លើ App Telegram!\n\n` +
     `✅ ទស្សនាគ្រប់រឿងក្នុង App ដែរងាយស្រួល\n` +
     `🔥 កម្រិត Full HD 1080p ទស្សនាដោយរលូន 🍿\n` +
-    `📺 មានរឿងថ្មីៗជាប្រចាំ\n\n` +
-    `👇 សូមចុចប៊ូតុង "▶ ចុចមើលរឿងឥឡូវនេះ" ខាងក្រោមដើម្បីចូលទស្សនា៖`;
+    `📺 10 រឿង · 573 ភាគ — មានរឿងថ្មីៗជាប្រចាំ\n\n` +
+    `👇 សូមចុចប៊ូតុង "▶ មើលឥឡូវនេះ" ខាងក្រោមដើម្បីចូលទស្សនា៖`;
   const openAppBtn = Markup.inlineKeyboard([
-    Markup.button.webApp('▶ មើលរឿងឥឡូវនេះ', cfg.WEBAPP_URL),
+    Markup.button.webApp('▶ មើលឥឡូវនេះ', cfg.WEBAPP_URL),
   ]);
   try {
     await ctx.replyWithPhoto(BANNER_PHOTO, {
