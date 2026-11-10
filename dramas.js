@@ -6,6 +6,19 @@
 // then upload the updated file to GitHub (Pages rebuilds automatically).
 const DRAMAS = [
   {
+id: 90001,
+title: "ស្នេហ៍ល្បួងចិត្តនៅរាត្រី",
+poster: "https://drive.google.com/file/d/1V_6aaiNpyT4oxtHzE8zAZXaxvE5ogXFj/view?usp=sharing",
+price: 0,
+rating: 9.0,
+genre: "Drama",
+badge: "NEW",
+featured: true,
+episodes: [
+{ ep: 1, url: "https://drive.usercontent.google.com/download?id=1WKUMfiV1-B4AafQFGGHa0lnUwDvGypx3&export=download&confirm=t" },
+],
+},
+  {
     id: 19087,
     title: "十八岁太奶奶驾到，重整家族荣耀 5",
     poster: "https://www.8movie.com/p/19087-tprf.jpg",
