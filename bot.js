@@ -71,10 +71,10 @@ bot.start(async (ctx) => {
     `សូមស្វាគមន៍មកកាន់ <b>Drama mini app</b> — ទស្សនារឿងភាគ និងរឿងដុំ លើ App Telegram!\n\n` +
     `✅ ទស្សនាគ្រប់រឿងក្នុង App ដែរងាយស្រួល\n` +
     `🔥 កម្រិត Full HD 1080p ទស្សនាដោយរលូន 🍿\n` +
-    `📺 10 រឿង · 573 ភាគ — មានរឿងថ្មីៗជាប្រចាំ\n\n` +
-    `👇 សូមចុចប៊ូតុង "▶ មើលឥឡូវនេះ" ខាងក្រោមដើម្បីចូលទស្សនា៖`;
+    `📺 មានរឿងថ្មីៗជាប្រចាំ\n\n` +
+    `👇 សូមចុចប៊ូតុង "▶ ចុចមើលរឿងឥឡូវនេះ" ខាងក្រោមដើម្បីចូលទស្សនា៖`;
   const openAppBtn = Markup.inlineKeyboard([
-    Markup.button.webApp('▶ មើលឥឡូវនេះ', cfg.WEBAPP_URL),
+    Markup.button.webApp('▶ មើលរឿងឥឡូវនេះ', cfg.WEBAPP_URL),
   ]);
   try {
     await ctx.replyWithPhoto(BANNER_PHOTO, {
