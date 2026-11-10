@@ -97,7 +97,7 @@ function payserverOn() { return PAYSERVER_URL && PAYSERVER_URL.indexOf('http') =
    + 8movie button, like v2.7.2). See drama-proxy-worker.js
    + Cloudflare-Proxy-Setup-ខ្មែរ.txt for the Worker setup.
    IMPORTANT: no trailing slash (/) at the end of the URL. */
-const PROXY_URL = ''; // <-- ដាក់ Worker URL របស់អ្នកនៅទីនេះ (ឧ. https://drama-proxy-xxxx.workers.dev)
+const PROXY_URL = 'https://crimson-pond-be69.measdary300.workers.dev'; // <-- ដាក់ Worker URL របស់អ្នកនៅទីនេះ (ឧ. https://drama-proxy-xxxx.workers.dev)
 function proxyOn() { return PROXY_URL && PROXY_URL.indexOf('http') === 0; }
 function proxify(url) {
   if (!url || !proxyOn()) return url;
