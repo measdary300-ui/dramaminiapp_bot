@@ -751,4 +751,4 @@ const DRAMAS = [
     { ep: 40, url: "https://img30.dramasimida.com/m4/20263/040_artrvj.mp4" },
   
 ];
-
+},
