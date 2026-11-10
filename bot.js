@@ -1,5 +1,9 @@
 // ============================================================
-// Telegram Drama Bot v2.3 — Node.js + Telegraf
+// Telegram Drama Bot v2.4 — Node.js + Telegraf
+// v2.4: BANNER_PHOTO strips the ?v=... cache-bust query from WEBAPP_URL
+// before appending /banner.jpg (WEBAPP_URL now has ?v=2.8 — appending
+// after the query gave .../?v=2.8/banner.jpg, which GitHub Pages
+// serves as index.html, so the bot never showed the custom banner).
 // ------------------------------------------------------------
 // WHAT THIS BOT DOES:
 //   /start → sends a custom banner photo (banner.jpg, hosted on
@@ -52,14 +56,18 @@ if (!cfg.WEBAPP_URL || cfg.WEBAPP_URL.includes('PASTE')) {
 // Banner photo for /start — your own custom banner (banner.jpg),
 // hosted on your GitHub Pages next to the Mini App.
 // Fallback: the featured drama poster from 8movie.
-const BANNER_PHOTO = cfg.WEBAPP_URL.replace(/\/?$/, '/') + 'banner.jpg';
+// NOTE: strip any ?v=... query from WEBAPP_URL first — WEBAPP_URL
+// has a ?v=2.8 cache-bust, and appending /banner.jpg after the
+// query (…/?v=2.8/banner.jpg) makes GitHub Pages return index.html
+// instead of the banner image!
+const BANNER_PHOTO = cfg.WEBAPP_URL.split('?')[0].replace(/\/?$/, '/') + 'banner.jpg';
 const BANNER_FALLBACK = 'https://www.8movie.com/p/19087-tprf.jpg';
 
 const bot = new Telegraf(cfg.BOT_TOKEN);
 
 bot.start(async (ctx) => {
   const caption =
-    `🎬​​ <b>សួស្តី ${ctx.from.first_name}!</b>\n\n` +
+    `🎬 <b>សួស្តី ${ctx.from.first_name}!</b>\n\n` +
     `សូមស្វាគមន៍មកកាន់ <b>Drama mini app</b> — ទស្សនារឿងភាគ និងរឿងដុំ លើ App Telegram!\n\n` +
     `✅ ទស្សនាគ្រប់រឿងក្នុង App ដែរងាយស្រួល\n` +
     `🔥 កម្រិត Full HD 1080p ទស្សនាដោយរលូន 🍿\n` +
