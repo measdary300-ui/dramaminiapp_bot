@@ -15,7 +15,7 @@ genre: "Drama",
 badge: "NEW",
 featured: true,
 episodes: [
-{ ep: 1, url: "✅ https://drive.usercontent.google.com/download?id=1GzBbvLGlRixbl5UvY6e7zykp6xKSHDVu&export=download&confirm=t" },
+{ ep: 1, url: "https://drive.usercontent.google.com/download?id=1GzBbvLGlRixbl5UvY6e7zykp6xKSHDVu&export=download&confirm=t" },
 ],
 },
   {
